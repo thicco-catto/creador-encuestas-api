@@ -7,10 +7,10 @@ interface Params {
 }
 
 export async function GET(_: NextRequest, { params }: RouteParams<Params>) {
-    const profiles = await GetAllQuestions(params.surveyId);
+    const questions = await GetAllQuestions(params.surveyId);
 
-    if(profiles) {
-        return Ok(profiles);
+    if(questions) {
+        return Ok(questions);
     } else {
         return NotFound();
     }
