@@ -1,7 +1,8 @@
 import { Profile } from "@/models/Profile";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc } from "firebase/firestore";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { GetProfileCollection, GetProfileDocument } from "./dbContext";
 import { ProfileCreationDTO } from "@/models/dto/profileCreationDTO";
+import { ProfileUpdateDTO } from "@/models/dto/profileUpdateDTO";
 
 function GetProfileFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
@@ -49,4 +50,22 @@ export async function AddProfile(surveyId: string, dto: ProfileCreationDTO) {
         Title: profile.Title,
         Description: profile.Description,
     };
+}
+
+export async function UpdateProfile(surveyId: string, profileId: string, dto: ProfileUpdateDTO) {
+    const profile = await GetProfile(surveyId, profileId);
+    if(!profile) {
+        return false;
+    }
+
+    await updateDoc(GetProfileDocument(surveyId, profileId), {
+        Title: dto.Title,
+        Description: dto.Description
+    });
+
+    return true;
+}
+
+export async function DeleteProfile(surveyId: string, profileId: string) {
+    await deleteDoc(GetProfileDocument(surveyId, profileId));
 }
