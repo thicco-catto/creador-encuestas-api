@@ -1,72 +1,76 @@
 import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
 import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
+import { DocumentData, DocumentSnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { DB, GetSurveyCollection, GetSurveyDocument } from "./dbContext";
+import { QueryDocumentSnapshot } from "firebase/firestore/lite";
 
-const CurrentSurveys: Survey[] = [
-    {
-        ID: "1",
-        Title: "Encuesta 1",
-        PrivateDescription: "Esta encuesta es la primera",
-        PublicDescription: "Algo algo algo",
-        Profiles: [ "1", "2" ],
-        Questions: [ "1", "2", "3" ]
-    },
-    {
-        ID: "2",
-        Title: "Encuesta 2",
-        PrivateDescription: "Esta encuesta es para la dependencia",
-        PublicDescription: "Algo algo algo",
-        Profiles: [],
-        Questions: [ "4" ]
+function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
+    const data = document.data();
+    if(!data){
+        return;
     }
-]
-
-export async function GetAllSurveys() {
-    return CurrentSurveys;
-}
-
-export async function GetSurvey(id: string) {
-    return CurrentSurveys.find(x => x.ID === id)
-}
-
-export async function AddSurvey(dto: SurveyCreationDTO) {
-    const maxID = Math.max(...CurrentSurveys.map(x => parseInt(x.ID)))
 
     const survey: Survey = {
-        ID: (maxID+1).toString(),
-        Title: dto.Title,
-        PrivateDescription: dto.PrivateDescription,
-        PublicDescription: dto.PublicDescription,
-        Profiles: [],
-        Questions: []
+        ID: document.id,
+        Title: data["Title"],
+        PublicDescription: data["PublicDescription"],
+        PrivateDescription: data["PrivateDescription"]
     }
-
-    CurrentSurveys.push(survey);
-
     return survey;
 }
 
-export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
-    const surveyToUpdate = await GetSurvey(id);
-    if(!surveyToUpdate) {
-        return false;
-    }
+export async function GetAllSurveys() {
+    const docs = await getDocs(GetSurveyCollection());
+    const surveys: Survey[] = [];
 
-    surveyToUpdate.Title = dto.Title;
-    surveyToUpdate.PrivateDescription = dto.PrivateDescription;
-    surveyToUpdate.PublicDescription = dto.PublicDescription;
+    docs.forEach(document => {
+        const survey = GetSurveyFromDocument(document);
+        if(survey) {
+            surveys.push(survey);
+        }
+    });
 
-    return true;
+    return surveys;
 }
 
-export async function DeleteSurvey(id: string) {
+export async function GetSurvey(id: string) {
+    const document = await getDoc(GetSurveyDocument(id))
+    return GetSurveyFromDocument(document);
+}
+
+export async function AddSurvey(dto: SurveyCreationDTO): Promise<Survey> {
+    const survey = {
+        Title: dto.Title,
+        PrivateDescription: dto.PrivateDescription,
+        PublicDescription: dto.PublicDescription
+    }
+
+    const docRef = await addDoc(GetSurveyCollection(), survey)
+
+    return {
+        ID: docRef.id,
+        Title: survey.Title,
+        PublicDescription: survey.PublicDescription,
+        PrivateDescription: survey.PrivateDescription
+    };
+}
+
+export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
     const survey = await GetSurvey(id);
     if(!survey) {
         return false;
     }
 
-    const index = CurrentSurveys.indexOf(survey)
-    CurrentSurveys.splice(index, 1)
+    await updateDoc(GetSurveyDocument(id), {
+        Title: dto.Title,
+        PublicDescription: dto.PublicDescription,
+        PrivateDescription: dto.PrivateDescription
+    });
 
-    return true
+    return true;
+}
+
+export async function DeleteSurvey(id: string) {
+    await deleteDoc(GetSurveyDocument(id));
 }

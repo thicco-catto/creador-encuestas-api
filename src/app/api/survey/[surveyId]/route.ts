@@ -39,11 +39,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams<Params>)
 }
 
 export async function DELETE(_: NextRequest, { params }: RouteParams<Params>) {
-    const success = await DeleteSurvey(params.surveyId)
+    await DeleteSurvey(params.surveyId)
 
-    if (success) {
-        return NoContent();
-    } else {
-        return NotFound();
-    }
+    return NoContent();
 }
