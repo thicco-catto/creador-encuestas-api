@@ -8,9 +8,7 @@ interface Params {
 }
 
 export async function GET(_: NextRequest, {params}: RouteParams<Params>) {
-    const id = params.questionId;
-
-    const question = await GetQuestion(id);
+    const question = await GetQuestion(params.surveyId, params.questionId);
 
     if(!question) {
         return NotFound();

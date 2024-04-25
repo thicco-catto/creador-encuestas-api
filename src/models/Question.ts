@@ -1,9 +1,8 @@
 import { QuestionDetails } from "./QuestionDetails";
-import { QuestionVersion } from "./QuestionVersion";
 
 export enum QuestionType {
-    SINGLE_CHOICE,
-    MULTIPLE_CHOICE
+    SINGLE_CHOICE = 1,
+    MULTIPLE_CHOICE = 2
 }
 
 export interface Question {
@@ -11,5 +10,4 @@ export interface Question {
     InternalTitle: string,
     QuestionType: QuestionType,
     DefaultDetails: QuestionDetails
-    Versions: string[]
 }
