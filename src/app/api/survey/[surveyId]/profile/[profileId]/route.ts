@@ -8,9 +8,7 @@ interface Params {
 }
 
 export async function GET(_: NextRequest, {params}: RouteParams<Params>) {
-    const id = params.profileId;
-
-    const profile = await GetProfile(id);
+    const profile = await GetProfile(params.surveyId, params.profileId);
 
     if(!profile) {
         return NotFound();

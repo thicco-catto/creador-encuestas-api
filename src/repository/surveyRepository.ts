@@ -1,8 +1,8 @@
 import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
 import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
-import { DocumentData, DocumentSnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
-import { DB, GetSurveyCollection, GetSurveyDocument } from "./dbContext";
+import { DocumentData, DocumentSnapshot, addDoc, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { GetSurveyCollection, GetSurveyDocument } from "./dbContext";
 import { QueryDocumentSnapshot } from "firebase/firestore/lite";
 
 function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {

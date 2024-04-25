@@ -26,3 +26,13 @@ export function GetSurveyCollection() {
 export function GetSurveyDocument(id: string) {
   return doc(DB, SURVEY_COLLECTION, id);
 }
+
+const PROFILE_COLLECTION = "Profile"
+
+export function GetProfileCollection(surveyId: string) {
+  return collection(DB, SURVEY_COLLECTION, surveyId, PROFILE_COLLECTION)
+}
+
+export function GetProfileDocument(surveyId: string, profileId: string) {
+  return doc(DB, SURVEY_COLLECTION, surveyId, PROFILE_COLLECTION, profileId);
+}
