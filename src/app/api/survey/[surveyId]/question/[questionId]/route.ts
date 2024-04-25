@@ -1,15 +1,16 @@
 import { NotFound, Ok, RouteParams } from "@/lib/routeHelper";
-import { GetSurvey } from "@/repository/surveyRepository";
+import { GetQuestion } from "@/repository/questionRepository";
 import { NextRequest } from "next/server";
 
 interface Params {
-    surveyId: string
+    surveyId: string,
+    questionId: string
 }
 
 export async function GET(_: NextRequest, {params}: RouteParams<Params>) {
-    const id = params.surveyId;
+    const id = params.questionId;
 
-    const survey = await GetSurvey(id);
+    const survey = await GetQuestion(id);
 
     if(!survey) {
         return NotFound();

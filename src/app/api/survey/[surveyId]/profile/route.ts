@@ -3,11 +3,11 @@ import { GetAllProfiles } from "@/repository/profileRepository";
 import { NextRequest } from "next/server";
 
 interface Params {
-    id: string
+    surveyId: string
 }
 
 export async function GET(_: NextRequest, { params }: RouteParams<Params>) {
-    const profiles = await GetAllProfiles(params.id);
+    const profiles = await GetAllProfiles(params.surveyId);
 
     if(profiles) {
         return Ok(profiles);
