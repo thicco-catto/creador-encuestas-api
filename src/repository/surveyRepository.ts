@@ -58,3 +58,15 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
 
     return true;
 }
+
+export async function DeleteSurvey(id: string) {
+    const survey = await GetSurvey(id);
+    if(!survey) {
+        return false;
+    }
+
+    const index = CurrentSurveys.indexOf(survey)
+    CurrentSurveys.splice(index, 1)
+
+    return true
+}

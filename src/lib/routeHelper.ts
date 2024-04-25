@@ -13,7 +13,7 @@ export function Created(body: any) {
     return NextResponse.json(body, { status: 201 });
 }
 
-export function NoResponse() {
+export function NoContent() {
     return NextResponse.json({}, { status: 206 });
 }
 
