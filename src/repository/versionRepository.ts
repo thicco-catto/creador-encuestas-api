@@ -3,11 +3,11 @@ import { GetQuestion } from "./questionRepository";
 
 const CurrentVersions: QuestionVersion[] = [
     {
-        ID: "a",
+        ID: "1",
         Title: "Pocos estudios",
         Description: "Version de la pregunta para personas con menos estudios",
         Profiles: [
-            "a"
+            "1"
         ],
         Details: {
             Title: "Que hora es?",
