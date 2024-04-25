@@ -1,5 +1,6 @@
 import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
+import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
 
 const CurrentSurveys: Survey[] = [
     {
@@ -43,4 +44,17 @@ export async function AddSurvey(dto: SurveyCreationDTO) {
     CurrentSurveys.push(survey);
 
     return survey;
+}
+
+export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
+    const surveyToUpdate = await GetSurvey(id);
+    if(!surveyToUpdate) {
+        return false;
+    }
+
+    surveyToUpdate.Title = dto.Title;
+    surveyToUpdate.PrivateDescription = dto.PrivateDescription;
+    surveyToUpdate.PublicDescription = dto.PublicDescription;
+
+    return true;
 }

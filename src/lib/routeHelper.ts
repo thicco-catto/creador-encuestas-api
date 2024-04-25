@@ -13,6 +13,10 @@ export function Created(body: any) {
     return NextResponse.json(body, { status: 201 });
 }
 
+export function NoResponse() {
+    return NextResponse.json({}, { status: 206 });
+}
+
 export function BadRequest() {
     return NextResponse.json({}, { status: 400 });
 }
