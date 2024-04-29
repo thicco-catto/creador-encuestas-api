@@ -46,3 +46,13 @@ export function GetQuestionCollection(surveyId: string) {
 export function GetQuestionDocument(surveyId: string, questionId: string) {
   return doc(DB, SURVEY_COLLECTION, surveyId, QUESTION_COLLECTION, questionId);
 }
+
+const VERSION_COLLECTION = "Version"
+
+export function GetVersionCollection(surveyId: string, questionId: string) {
+  return collection(DB, SURVEY_COLLECTION, surveyId, QUESTION_COLLECTION, questionId, VERSION_COLLECTION)
+}
+
+export function GetVersionDocument(surveyId: string, questionId: string, versionId: string) {
+  return doc(DB, SURVEY_COLLECTION, surveyId, QUESTION_COLLECTION, questionId, VERSION_COLLECTION, versionId);
+}
