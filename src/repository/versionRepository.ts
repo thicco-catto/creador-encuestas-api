@@ -1,9 +1,10 @@
 import { QuestionVersion } from "@/models/QuestionVersion";
 import { GetQuestion } from "./questionRepository";
 import { GetVersionCollection, GetVersionDocument } from "./dbContext";
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, addDoc, getDoc, getDocs } from "firebase/firestore";
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, addDoc, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Question } from "@/models/Question";
 import { QuestionVersionCreationDTO } from "@/models/dto/versionCreationDTO";
+import { QuestionVersionUpdateDTO } from "@/models/dto/versionUpdateDTO";
 
 const CurrentVersions: QuestionVersion[] = [
     {
@@ -82,4 +83,24 @@ export async function AddVersion(surveyId: string, questionId: string, dto: Ques
         Profiles: dto.Profiles,
         Details: dto.Details
     };
+}
+
+export async function UpdateVersion(surveyId: string, questionId: string, versionId: string, dto: QuestionVersionUpdateDTO) {
+    const version = await GetVersion(surveyId, questionId, versionId);
+    if(!version) {
+        return false;
+    }
+
+    await updateDoc(GetVersionDocument(surveyId, questionId, versionId), {
+        Title: dto.Title,
+        Description: dto.Description,
+        Profiles: dto.Profiles,
+        Details: dto.Details
+    });
+
+    return true;
+}
+
+export async function DeleteQuestion(surveyId: string, questionId: string, versionId: string) {
+    await deleteDoc(GetVersionDocument(surveyId, questionId, versionId));
 }
