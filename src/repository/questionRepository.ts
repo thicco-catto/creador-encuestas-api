@@ -1,5 +1,5 @@
 import { Question } from "@/models/Question";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc } from "firebase/firestore";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { GetQuestionCollection, GetQuestionDocument } from "./dbContext";
 import { QuestionCreationDTO } from "@/models/dto/questionCreationDTO";
 import { QuestionUpdateDTO } from "@/models/dto/questionUpdateDTO";
@@ -72,4 +72,8 @@ export async function UpdateQuestion(surveyId: string, questionId: string, dto: 
     });
 
     return true;
+}
+
+export async function DeleteQuestion(surveyId: string, questionId: string) {
+    await deleteDoc(GetQuestionDocument(surveyId, questionId));
 }
