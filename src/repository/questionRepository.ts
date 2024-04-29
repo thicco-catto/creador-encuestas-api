@@ -1,7 +1,8 @@
 import { Question } from "@/models/Question";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc } from "firebase/firestore";
-import { GetProfileCollection, GetQuestionCollection, GetQuestionDocument } from "./dbContext";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc } from "firebase/firestore";
+import { GetQuestionCollection, GetQuestionDocument } from "./dbContext";
 import { QuestionCreationDTO } from "@/models/dto/questionCreationDTO";
+import { QuestionUpdateDTO } from "@/models/dto/questionUpdateDTO";
 
 function GetQuestionFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
@@ -14,8 +15,8 @@ function GetQuestionFromDocument(document: QueryDocumentSnapshot<DocumentData, D
         InternalTitle: data["InternalTitle"],
         QuestionType: data["QuestionType"],
         DefaultDetails: {
-            Title: data["DefaultTitle"],
-            Answers: data["DefaultAnswers"],
+            Title: data["DefaultDetails"]["Title"],
+            Answers: data["DefaultDetails"]["Answers"],
         }
     }
     return question;
@@ -56,4 +57,19 @@ export async function AddQuestion(surveyId: string, dto: QuestionCreationDTO) {
         QuestionType: dto.QuestionType,
         DefaultDetails: dto.DefaultDetails
     };
+}
+
+export async function UpdateQuestion(surveyId: string, questionId: string, dto: QuestionUpdateDTO) {
+    const profile = await GetQuestion(surveyId, questionId);
+    if(!profile) {
+        return false;
+    }
+
+    await updateDoc(GetQuestionDocument(surveyId, questionId), {
+        InternalTitle: dto.InternalTitle,
+        QuestionType: dto.QuestionType,
+        DefaultDetails: dto.DefaultDetails
+    });
+
+    return true;
 }
