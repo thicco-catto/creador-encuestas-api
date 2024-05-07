@@ -1,14 +1,16 @@
 import { Question } from "@/models/Question";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { GetQuestionCollection, GetQuestionDocument } from "./dbContext";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc, count, collection, getCountFromServer } from "firebase/firestore";
+import { GetQuestionCollection, GetQuestionDocument, GetVersionCollection } from "./dbContext";
 import { QuestionCreationDTO } from "@/models/dto/questionCreationDTO";
 import { QuestionUpdateDTO } from "@/models/dto/questionUpdateDTO";
 
-function GetQuestionFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
+async function GetQuestionFromDocument(surveyId: string, document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
     if(!data){
         return;
     }
+
+    const numVersions = await getCountFromServer(GetVersionCollection(surveyId, document.id));
 
     const question: Question = {
         ID: document.id,
@@ -17,7 +19,8 @@ function GetQuestionFromDocument(document: QueryDocumentSnapshot<DocumentData, D
         DefaultDetails: {
             Title: data["DefaultDetails"]["Title"],
             Answers: data["DefaultDetails"]["Answers"],
-        }
+        },
+        HasVersions: numVersions.data().count > 0
     }
     return question;
 }
@@ -26,19 +29,22 @@ export async function GetAllQuestions(surveyId: string) {
     const docs = await getDocs(GetQuestionCollection(surveyId));
     const questions: Question[] = [];
 
-    docs.forEach(document => {
-        const question = GetQuestionFromDocument(document);
+    const docsArr = docs.docs;
+
+    for (let i = 0; i < docsArr.length; i++) {
+        const document = docsArr[i];
+        const question = await GetQuestionFromDocument(surveyId, document);
         if(question) {
             questions.push(question);
         }
-    });
+    }
 
     return questions;
 }
 
 export async function GetQuestion(surveyId: string, questionId: string) {
     const document = await getDoc(GetQuestionDocument(surveyId, questionId));
-    return GetQuestionFromDocument(document);
+    return await GetQuestionFromDocument(surveyId, document);
 }
 
 

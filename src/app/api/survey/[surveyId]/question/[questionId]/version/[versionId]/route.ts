@@ -33,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams<Params>)
         } else {
             return NotFound();
         }
-    } catch {
+    } catch (e){
         return BadRequest();
     }
 }

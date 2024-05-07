@@ -9,5 +9,6 @@ export interface Question {
     ID: string,
     InternalTitle: string,
     QuestionType: QuestionType,
-    DefaultDetails: QuestionDetails
+    DefaultDetails: QuestionDetails,
+    HasVersions: boolean
 }
