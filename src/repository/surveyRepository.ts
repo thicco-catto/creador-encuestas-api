@@ -1,8 +1,8 @@
 import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
 import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
-import { DocumentData, DocumentSnapshot, addDoc, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import { GetSurveyCollection, GetSurveyDocument } from "./dbContext";
+import { DocumentData, DocumentSnapshot, addDoc, arrayRemove, arrayUnion, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { DB, GetSurveyCollection, GetSurveyDocument } from "./dbContext";
 import { QueryDocumentSnapshot } from "firebase/firestore/lite";
 
 function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
@@ -15,7 +15,8 @@ function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, Doc
         ID: document.id,
         Title: data["Title"],
         PublicDescription: data["PublicDescription"],
-        PrivateDescription: data["PrivateDescription"]
+        PrivateDescription: data["PrivateDescription"],
+        QuestionOrder: data["QuestionOrder"]
     }
     return survey;
 }
@@ -52,7 +53,8 @@ export async function AddSurvey(dto: SurveyCreationDTO): Promise<Survey> {
         ID: docRef.id,
         Title: survey.Title,
         PublicDescription: survey.PublicDescription,
-        PrivateDescription: survey.PrivateDescription
+        PrivateDescription: survey.PrivateDescription,
+        QuestionOrder: []
     };
 }
 
@@ -65,7 +67,8 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
     await updateDoc(GetSurveyDocument(id), {
         Title: dto.Title,
         PublicDescription: dto.PublicDescription,
-        PrivateDescription: dto.PrivateDescription
+        PrivateDescription: dto.PrivateDescription,
+        QuestionOrder: dto.QuestionOrder
     });
 
     return true;
@@ -73,4 +76,30 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
 
 export async function DeleteSurvey(id: string) {
     await deleteDoc(GetSurveyDocument(id));
+}
+
+export async function AddQuestionToOrder(surveyId: string, questionId: string) {
+    const survey = await GetSurvey(surveyId);
+    if(!survey) {
+        return false;
+    }
+
+    await updateDoc(GetSurveyDocument(surveyId), {
+        QuestionOrder: arrayUnion(questionId)
+    });
+
+    return true
+}
+
+export async function RemoveQuestionFromOrder(surveyId: string, questionId: string) {
+    const survey = await GetSurvey(surveyId);
+    if(!survey) {
+        return false;
+    }
+
+    await updateDoc(GetSurveyDocument(surveyId), {
+        QuestionOrder: arrayRemove(questionId)
+    });
+
+    return true
 }

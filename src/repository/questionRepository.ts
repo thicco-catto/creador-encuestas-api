@@ -19,6 +19,8 @@ async function GetQuestionFromDocument(surveyId: string, document: QueryDocument
         DefaultDetails: {
             Title: data["DefaultDetails"]["Title"],
             Answers: data["DefaultDetails"]["Answers"],
+            First: data["DefaultDetails"]["First"] ?? "",
+            Last: data["DefaultDetails"]["Last"] ?? "",
         },
         HasVersions: numVersions.data().count > 0
     }

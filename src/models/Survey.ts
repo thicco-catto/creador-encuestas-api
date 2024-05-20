@@ -2,5 +2,6 @@ export interface Survey {
     ID : string,
     Title : string,
     PrivateDescription : string,
-    PublicDescription : string
+    PublicDescription : string,
+    QuestionOrder: string[]
 }

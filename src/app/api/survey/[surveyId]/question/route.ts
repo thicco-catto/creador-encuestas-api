@@ -1,6 +1,7 @@
 import { BadRequest, Created, NotFound, Ok, RouteParams } from "@/lib/routeHelper";
 import { QuestionCreationDTOFromJSON } from "@/models/dto/questionCreationDTO";
 import { AddQuestion, GetAllQuestions } from "@/repository/questionRepository";
+import { AddQuestionToOrder } from "@/repository/surveyRepository";
 import { NextRequest } from "next/server";
 
 interface Params {
@@ -24,6 +25,8 @@ export async function POST(request: NextRequest, { params }: RouteParams<Params>
         const dto = QuestionCreationDTOFromJSON(json);
 
         const question = await AddQuestion(params.surveyId, dto);
+
+        await AddQuestionToOrder(params.surveyId, question.ID);
 
         return Created(question);
     } catch {

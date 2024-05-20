@@ -1,6 +1,7 @@
 import { BadRequest, NoContent, NotFound, Ok, RouteParams } from "@/lib/routeHelper";
 import { QuestionUpdateDTOFromJSON } from "@/models/dto/questionUpdateDTO";
 import { DeleteQuestion, GetQuestion, UpdateQuestion } from "@/repository/questionRepository";
+import { RemoveQuestionFromOrder } from "@/repository/surveyRepository";
 import { NextRequest } from "next/server";
 
 interface Params {
@@ -40,6 +41,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams<Params>)
 
 export async function DELETE(_: NextRequest, { params }: RouteParams<Params>) {
     await DeleteQuestion(params.surveyId, params.questionId);
+
+    await RemoveQuestionFromOrder(params.surveyId, params.questionId);
 
     return NoContent();
 }

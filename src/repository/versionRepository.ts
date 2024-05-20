@@ -1,29 +1,8 @@
 import { QuestionVersion } from "@/models/QuestionVersion";
-import { GetQuestion } from "./questionRepository";
 import { GetVersionCollection, GetVersionDocument } from "./dbContext";
 import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, addDoc, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import { Question } from "@/models/Question";
 import { QuestionVersionCreationDTO } from "@/models/dto/versionCreationDTO";
 import { QuestionVersionUpdateDTO } from "@/models/dto/versionUpdateDTO";
-
-const CurrentVersions: QuestionVersion[] = [
-    {
-        ID: "1",
-        Title: "Pocos estudios",
-        Description: "Version de la pregunta para personas con menos estudios",
-        Profiles: [
-            "1"
-        ],
-        Details: {
-            Title: "Que hora es?",
-            Answers: [
-                "Una de la tarde",
-                "Dos de la tarde",
-                "Tres de la tarde"
-            ]
-        }
-    }
-]
 
 
 function GetVersionFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
@@ -40,6 +19,8 @@ function GetVersionFromDocument(document: QueryDocumentSnapshot<DocumentData, Do
         Details: {
             Title: data["Details"]["Title"],
             Answers: data["Details"]["Answers"],
+            First: data["Details"]["First"] ?? "",
+            Last: data["Details"]["Last"] ?? "",
         }
     }
     return version;
