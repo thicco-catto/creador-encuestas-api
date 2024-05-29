@@ -56,3 +56,13 @@ export function GetVersionCollection(surveyId: string, questionId: string) {
 export function GetVersionDocument(surveyId: string, questionId: string, versionId: string) {
   return doc(DB, SURVEY_COLLECTION, surveyId, QUESTION_COLLECTION, questionId, VERSION_COLLECTION, versionId);
 }
+
+const SURVEY_NODE_COLLECTION = "Node"
+
+export function GetSurveyNodeCollection(surveyId: string) {
+  return collection(DB, SURVEY_COLLECTION, surveyId, SURVEY_NODE_COLLECTION);
+}
+
+export function GetSurveyNodeDocument(surveyId: string, surveyNodeId: string) {
+  return doc(DB, SURVEY_COLLECTION, surveyId, SURVEY_NODE_COLLECTION, surveyNodeId);
+}

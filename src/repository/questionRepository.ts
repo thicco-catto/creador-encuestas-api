@@ -1,5 +1,5 @@
 import { Question } from "@/models/Question";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc, count, collection, getCountFromServer } from "firebase/firestore";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc, getCountFromServer } from "firebase/firestore";
 import { GetQuestionCollection, GetQuestionDocument, GetVersionCollection } from "./dbContext";
 import { QuestionCreationDTO } from "@/models/dto/questionCreationDTO";
 import { QuestionUpdateDTO } from "@/models/dto/questionUpdateDTO";
