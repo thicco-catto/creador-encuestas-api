@@ -1,4 +1,4 @@
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, getDoc, getDocs, query, where } from "firebase/firestore/lite";
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, getDoc, getDocs, query, where } from "firebase/firestore";
 import { GetSurveyNodeCollection, GetSurveyNodeDocument } from "./dbContext";
 import { SurveyNode } from "@/models/SurveyNode";
 
