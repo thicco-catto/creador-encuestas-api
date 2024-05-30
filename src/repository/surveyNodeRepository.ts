@@ -12,7 +12,8 @@ function GetNodeFromDocument(document: QueryDocumentSnapshot<DocumentData, Docum
         ID: document.id,
         IsRoot: data["IsRoot"],
         QuestionId: data["QuestionId"],
-        NextPerAnswer: data["NextPerAnswer"]
+        NextPerAnswer: data["NextPerAnswer"],
+        Result: data["Result"]
     }
     return node;
 }
