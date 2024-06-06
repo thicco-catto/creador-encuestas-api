@@ -2,7 +2,8 @@ export interface SurveyUpateDTO {
     Title : string,
     PrivateDescription : string,
     PublicDescription : string,
-    QuestionOrder: string[]
+    QuestionOrder: string[],
+    LoadOrder?: string[]
 }
 
 
@@ -11,6 +12,7 @@ export function SurveyUpdateDTOFromJSON(json: any): SurveyUpateDTO {
     const privDesc = json["PrivateDescription"];
     const publicDesc = json["PublicDescription"];
     const questionOrder = json["QuestionOrder"];
+    const loadOrder = json["LoadOrder"];
 
     if(!title || !privDesc || !publicDesc || !questionOrder) {
         throw TypeError;
@@ -20,6 +22,7 @@ export function SurveyUpdateDTOFromJSON(json: any): SurveyUpateDTO {
         Title: title,
         PrivateDescription: privDesc,
         PublicDescription: publicDesc,
-        QuestionOrder: questionOrder
+        QuestionOrder: questionOrder,
+        LoadOrder: loadOrder
     }
 }

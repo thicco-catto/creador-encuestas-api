@@ -2,7 +2,7 @@ import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
 import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
 import { DocumentData, DocumentSnapshot, addDoc, arrayRemove, arrayUnion, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import { DB, GetSurveyCollection, GetSurveyDocument } from "./dbContext";
+import { GetSurveyCollection, GetSurveyDocument } from "./dbContext";
 import { QueryDocumentSnapshot } from "firebase/firestore/lite";
 
 function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
@@ -16,7 +16,8 @@ function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, Doc
         Title: data["Title"],
         PublicDescription: data["PublicDescription"],
         PrivateDescription: data["PrivateDescription"],
-        QuestionOrder: data["QuestionOrder"]
+        QuestionOrder: data["QuestionOrder"],
+        LoadOrder: data["LoadOrder"]
     }
     return survey;
 }
@@ -68,7 +69,8 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
         Title: dto.Title,
         PublicDescription: dto.PublicDescription,
         PrivateDescription: dto.PrivateDescription,
-        QuestionOrder: dto.QuestionOrder
+        QuestionOrder: dto.QuestionOrder,
+        LoadOrder: dto.LoadOrder
     });
 
     return true;
