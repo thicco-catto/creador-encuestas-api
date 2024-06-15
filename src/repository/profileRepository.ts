@@ -1,8 +1,8 @@
 import { Profile } from "@/models/Profile";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { GetProfileCollection, GetProfileDocument } from "./dbContext";
 import { ProfileCreationDTO } from "@/models/dto/profileCreationDTO";
 import { ProfileUpdateDTO } from "@/models/dto/profileUpdateDTO";
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 function GetProfileFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
@@ -19,7 +19,7 @@ function GetProfileFromDocument(document: QueryDocumentSnapshot<DocumentData, Do
 }
 
 export async function GetAllProfiles(surveyId: string) {
-    const docs = await getDocs(GetProfileCollection(surveyId));
+    const docs = await GetProfileCollection(surveyId).get();
     const profiles: Profile[] = [];
 
     docs.forEach(document => {
@@ -33,7 +33,7 @@ export async function GetAllProfiles(surveyId: string) {
 }
 
 export async function GetProfile(surveyId: string, profileId: string) {
-    const document = await getDoc(GetProfileDocument(surveyId, profileId))
+    const document = await GetProfileDocument(surveyId, profileId).get();
     return GetProfileFromDocument(document);
 }
 
@@ -43,7 +43,7 @@ export async function AddProfile(surveyId: string, dto: ProfileCreationDTO) {
         Description: dto.Description
     }
 
-    const docRef = await addDoc(GetProfileCollection(surveyId), profile)
+    const docRef = await GetProfileCollection(surveyId).add(profile);
 
     return {
         ID: docRef.id,
@@ -58,7 +58,7 @@ export async function UpdateProfile(surveyId: string, profileId: string, dto: Pr
         return false;
     }
 
-    await updateDoc(GetProfileDocument(surveyId, profileId), {
+    await GetProfileDocument(surveyId, profileId).update({
         Title: dto.Title,
         Description: dto.Description
     });
@@ -67,5 +67,5 @@ export async function UpdateProfile(surveyId: string, profileId: string, dto: Pr
 }
 
 export async function DeleteProfile(surveyId: string, profileId: string) {
-    await deleteDoc(GetProfileDocument(surveyId, profileId));
+    await GetProfileDocument(surveyId, profileId).delete();
 }

@@ -1,4 +1,4 @@
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, getDoc, getDocs, query, where } from "firebase/firestore";
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { GetSurveyNodeCollection, GetSurveyNodeDocument } from "./dbContext";
 import { SurveyNode } from "@/models/SurveyNode";
 
@@ -19,7 +19,7 @@ function GetNodeFromDocument(document: QueryDocumentSnapshot<DocumentData, Docum
 }
 
 export async function GetAllSurveyNodes(surveyId: string) {
-    const docs = await getDocs(GetSurveyNodeCollection(surveyId));
+    const docs = await GetSurveyNodeCollection(surveyId).get();
     const nodes: SurveyNode[] = [];
 
     const docsArr = docs.docs;
@@ -36,16 +36,14 @@ export async function GetAllSurveyNodes(surveyId: string) {
 }
 
 export async function GetSurveyNode(surveyId: string, nodeId: string) {
-    const document = await getDoc(GetSurveyNodeDocument(surveyId, nodeId));
+    const document = await GetSurveyNodeDocument(surveyId, nodeId).get();
     return GetNodeFromDocument(document);
 }
 
 export async function GetRootSurveyNode(surveyId: string) {
-    const nodesQuery = query(GetSurveyNodeCollection(surveyId), where("IsRoot", "==", true));
+    const result = await GetSurveyNodeCollection(surveyId).where("IsRoot", "==", true).get();
 
-    const docs = await getDocs(nodesQuery);
-
-    const docsArr = docs.docs;
+    const docsArr = result.docs;
 
     for (let i = 0; i < docsArr.length; i++) {
         const document = docsArr[i];

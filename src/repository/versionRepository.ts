@@ -1,8 +1,8 @@
 import { QuestionVersion } from "@/models/QuestionVersion";
 import { GetVersionCollection, GetVersionDocument } from "./dbContext";
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, addDoc, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { QuestionVersionCreationDTO } from "@/models/dto/versionCreationDTO";
 import { QuestionVersionUpdateDTO } from "@/models/dto/versionUpdateDTO";
+import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot } from "firebase-admin/firestore";
 
 
 function GetVersionFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
@@ -28,7 +28,7 @@ function GetVersionFromDocument(document: QueryDocumentSnapshot<DocumentData, Do
 
 
 export async function GetAllVersions(surveyId: string, questionId: string) {
-    const docs = await getDocs(GetVersionCollection(surveyId, questionId));
+    const docs = await GetVersionCollection(surveyId, questionId).get();
     const versions: QuestionVersion[] = [];
 
     docs.forEach(document => {
@@ -43,7 +43,7 @@ export async function GetAllVersions(surveyId: string, questionId: string) {
 
 
 export async function GetVersion(surveyId: string, questionId: string, versionId: string) {
-    const document = await getDoc(GetVersionDocument(surveyId, questionId, versionId));
+    const document = await GetVersionDocument(surveyId, questionId, versionId).get();
     return GetVersionFromDocument(document);
 }
 
@@ -53,9 +53,9 @@ export async function AddVersion(surveyId: string, questionId: string, dto: Ques
         Description: dto.Description,
         Profiles: dto.Profiles,
         Details: dto.Details
-    }
+    };
 
-    const docRef = await addDoc(GetVersionCollection(surveyId, questionId), question)
+    const docRef = await GetVersionCollection(surveyId, questionId).add(question);
 
     return {
         ID: docRef.id,
@@ -72,7 +72,7 @@ export async function UpdateVersion(surveyId: string, questionId: string, versio
         return false;
     }
 
-    await updateDoc(GetVersionDocument(surveyId, questionId, versionId), {
+    await GetVersionDocument(surveyId, questionId, versionId).update({
         Title: dto.Title,
         Description: dto.Description,
         Profiles: dto.Profiles,
@@ -83,5 +83,5 @@ export async function UpdateVersion(surveyId: string, questionId: string, versio
 }
 
 export async function DeleteQuestion(surveyId: string, questionId: string, versionId: string) {
-    await deleteDoc(GetVersionDocument(surveyId, questionId, versionId));
+    await GetVersionDocument(surveyId, questionId, versionId).delete();
 }

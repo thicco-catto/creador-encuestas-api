@@ -21,6 +21,10 @@ export function BadRequest() {
     return NextResponse.json({}, { status: 400 });
 }
 
+export function Unauthorized() {
+    return NextResponse.json({}, { status: 401});
+}
+
 export function NotFound() {
     return NextResponse.json({}, { status: 404 });
 }

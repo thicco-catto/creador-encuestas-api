@@ -1,8 +1,8 @@
 import { Question } from "@/models/Question";
-import { QueryDocumentSnapshot, DocumentData, DocumentSnapshot, getDocs, getDoc, addDoc, updateDoc, deleteDoc, getCountFromServer } from "firebase/firestore";
 import { GetQuestionCollection, GetQuestionDocument, GetVersionCollection } from "./dbContext";
 import { QuestionCreationDTO } from "@/models/dto/questionCreationDTO";
 import { QuestionUpdateDTO } from "@/models/dto/questionUpdateDTO";
+import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 async function GetQuestionFromDocument(surveyId: string, document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
@@ -10,7 +10,7 @@ async function GetQuestionFromDocument(surveyId: string, document: QueryDocument
         return;
     }
 
-    const numVersions = await getCountFromServer(GetVersionCollection(surveyId, document.id));
+    const numVersions = await GetVersionCollection(surveyId, document.id).count().get();
 
     const question: Question = {
         ID: document.id,
@@ -28,7 +28,7 @@ async function GetQuestionFromDocument(surveyId: string, document: QueryDocument
 }
 
 export async function GetAllQuestions(surveyId: string) {
-    const docs = await getDocs(GetQuestionCollection(surveyId));
+    const docs = await GetQuestionCollection(surveyId).get();
     const questions: Question[] = [];
 
     const docsArr = docs.docs;
@@ -45,7 +45,7 @@ export async function GetAllQuestions(surveyId: string) {
 }
 
 export async function GetQuestion(surveyId: string, questionId: string) {
-    const document = await getDoc(GetQuestionDocument(surveyId, questionId));
+    const document = await GetQuestionDocument(surveyId, questionId).get();
     return await GetQuestionFromDocument(surveyId, document);
 }
 
@@ -57,7 +57,7 @@ export async function AddQuestion(surveyId: string, dto: QuestionCreationDTO) {
         DefaultDetails: dto.DefaultDetails
     }
 
-    const docRef = await addDoc(GetQuestionCollection(surveyId), question)
+    const docRef = await GetQuestionCollection(surveyId).add(question);
 
     return {
         ID: docRef.id,
@@ -73,7 +73,7 @@ export async function UpdateQuestion(surveyId: string, questionId: string, dto: 
         return false;
     }
 
-    await updateDoc(GetQuestionDocument(surveyId, questionId), {
+    await GetQuestionDocument(surveyId, questionId).update({
         InternalTitle: dto.InternalTitle,
         QuestionType: dto.QuestionType,
         DefaultDetails: dto.DefaultDetails
@@ -83,5 +83,5 @@ export async function UpdateQuestion(surveyId: string, questionId: string, dto: 
 }
 
 export async function DeleteQuestion(surveyId: string, questionId: string) {
-    await deleteDoc(GetQuestionDocument(surveyId, questionId));
+    await GetQuestionDocument(surveyId, questionId).delete();
 }

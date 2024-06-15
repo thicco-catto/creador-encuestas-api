@@ -1,9 +1,8 @@
 import { Survey } from "@/models/Survey";
 import { SurveyCreationDTO } from "@/models/dto/surveyCreationDTO";
 import { SurveyUpateDTO } from "@/models/dto/surveyUpdateDTO";
-import { DocumentData, DocumentSnapshot, addDoc, arrayRemove, arrayUnion, deleteDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { GetSurveyCollection, GetSurveyDocument } from "./dbContext";
-import { QueryDocumentSnapshot } from "firebase/firestore/lite";
+import { DocumentData, DocumentSnapshot, FieldValue, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, DocumentData> | DocumentSnapshot<DocumentData, DocumentData>) {
     const data = document.data();
@@ -23,7 +22,7 @@ function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, Doc
 }
 
 export async function GetAllSurveys() {
-    const docs = await getDocs(GetSurveyCollection());
+    const docs = await GetSurveyCollection().get();
     const surveys: Survey[] = [];
 
     docs.forEach(document => {
@@ -37,7 +36,7 @@ export async function GetAllSurveys() {
 }
 
 export async function GetSurvey(id: string) {
-    const document = await getDoc(GetSurveyDocument(id))
+    const document = await GetSurveyDocument(id).get();
     return GetSurveyFromDocument(document);
 }
 
@@ -46,9 +45,9 @@ export async function AddSurvey(dto: SurveyCreationDTO): Promise<Survey> {
         Title: dto.Title,
         PrivateDescription: dto.PrivateDescription,
         PublicDescription: dto.PublicDescription
-    }
+    };
 
-    const docRef = await addDoc(GetSurveyCollection(), survey)
+    const docRef = await GetSurveyCollection().add(survey);
 
     return {
         ID: docRef.id,
@@ -65,7 +64,7 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
         return false;
     }
 
-    await updateDoc(GetSurveyDocument(id), {
+    await GetSurveyDocument(id).update({
         Title: dto.Title,
         PublicDescription: dto.PublicDescription,
         PrivateDescription: dto.PrivateDescription,
@@ -77,7 +76,7 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
 }
 
 export async function DeleteSurvey(id: string) {
-    await deleteDoc(GetSurveyDocument(id));
+    await GetSurveyDocument(id).delete();
 }
 
 export async function AddQuestionToOrder(surveyId: string, questionId: string) {
@@ -86,8 +85,8 @@ export async function AddQuestionToOrder(surveyId: string, questionId: string) {
         return false;
     }
 
-    await updateDoc(GetSurveyDocument(surveyId), {
-        QuestionOrder: arrayUnion(questionId)
+    await GetSurveyDocument(surveyId).update({
+        QuestionOrder: FieldValue.arrayUnion(questionId)
     });
 
     return true
@@ -99,8 +98,8 @@ export async function RemoveQuestionFromOrder(surveyId: string, questionId: stri
         return false;
     }
 
-    await updateDoc(GetSurveyDocument(surveyId), {
-        QuestionOrder: arrayRemove(questionId)
+    await GetSurveyDocument(surveyId).update({
+        QuestionOrder: FieldValue.arrayRemove(questionId)
     });
 
     return true
