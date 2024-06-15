@@ -1,4 +1,4 @@
-import { BadRequest, Created, NotFound, Ok, RouteParams } from "@/lib/routeHelper";
+import { BadRequest, Created, NotFound, Ok, RequireAuthorization, RouteParams, Unauthorized } from "@/lib/routeHelper";
 import { VersionCreationDTOFromJSON } from "@/models/dto/versionCreationDTO";
 import { AddVersion, GetAllVersions } from "@/repository/versionRepository";
 import { NextRequest } from "next/server";
@@ -20,6 +20,10 @@ export async function GET(_: NextRequest, {params}: RouteParams<Params>) {
 
 export async function POST(request: NextRequest, { params }: RouteParams<Params>) {
     try {
+        if(!RequireAuthorization(request)) {
+            return Unauthorized();
+        }
+        
         const json = await request.json();
 
         const dto = VersionCreationDTOFromJSON(json);

@@ -1,4 +1,4 @@
-import { BadRequest, Created, NotFound, Ok, RouteParams } from "@/lib/routeHelper";
+import { BadRequest, Created, NotFound, Ok, RequireAuthorization, RouteParams, Unauthorized } from "@/lib/routeHelper";
 import { ProfileCreationDTOFromJSON } from "@/models/dto/profileCreationDTO";
 import { AddProfile, GetAllProfiles } from "@/repository/profileRepository";
 import { NextRequest } from "next/server";
@@ -19,6 +19,10 @@ export async function GET(_: NextRequest, { params }: RouteParams<Params>) {
 
 export async function POST(request: NextRequest, { params }: RouteParams<Params>) {
     try {
+        if(!RequireAuthorization(request)) {
+            return Unauthorized();
+        }
+
         const json = await request.json();
 
         const dto = ProfileCreationDTOFromJSON(json);

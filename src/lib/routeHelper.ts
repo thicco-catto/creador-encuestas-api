@@ -1,7 +1,28 @@
-import { NextResponse } from "next/server";
+import { VerifyToken } from "@/repository/auth";
+import { NextRequest, NextResponse } from "next/server";
 
 export interface RouteParams<T> {
     params: T
+}
+
+
+export async function RequireAuthorization(request: NextRequest) {
+    const authHeader = request.headers.get('Authorization');
+        
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return Unauthorized();
+    }
+
+    const idToken = authHeader.split(' ')[1];
+
+    let decodedToken;
+    try {
+        decodedToken = await VerifyToken(idToken);
+    } catch {
+        return false;
+    }
+
+    return true;
 }
 
 
