@@ -16,7 +16,7 @@ function GetSurveyFromDocument(document: QueryDocumentSnapshot<DocumentData, Doc
         PublicDescription: data["PublicDescription"],
         PrivateDescription: data["PrivateDescription"],
         QuestionOrder: data["QuestionOrder"],
-        LoadOrder: data["LoadOrder"]
+        LoadOrder: data["LoadOrder"] ?? data["QuestionOrder"]
     }
     return survey;
 }
@@ -54,7 +54,8 @@ export async function AddSurvey(dto: SurveyCreationDTO): Promise<Survey> {
         Title: survey.Title,
         PublicDescription: survey.PublicDescription,
         PrivateDescription: survey.PrivateDescription,
-        QuestionOrder: []
+        QuestionOrder: [],
+        LoadOrder: []
     };
 }
 
@@ -69,7 +70,7 @@ export async function UpdateSurvey(id: string, dto: SurveyUpateDTO) {
         PublicDescription: dto.PublicDescription,
         PrivateDescription: dto.PrivateDescription,
         QuestionOrder: dto.QuestionOrder,
-        LoadOrder: dto.LoadOrder
+        LoadOrder: dto.LoadOrder ?? dto.QuestionOrder
     });
 
     return true;

@@ -21,21 +21,24 @@ export async function GET(_: NextRequest, { params }: RouteParams<Params>) {
 
 export async function POST(request: NextRequest, { params }: RouteParams<Params>) {
     try {
-        const authHeader = request.headers.get('Authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return Unauthorized();
-        }
+        // console.log("Hey");
+        // const authHeader = request.headers.get('Authorization');
+        // if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        //     return Unauthorized();
+        // }
 
-        const idToken = authHeader.split(' ')[1];
-        const decodedToken = await VerifyToken(idToken);
+        // const idToken = authHeader.split(' ')[1];
+        // const decodedToken = await VerifyToken(idToken);
 
-        console.log(decodedToken);
+        // console.log(decodedToken);
 
         const json = await request.json();
 
         const dto = QuestionCreationDTOFromJSON(json);
 
         const question = await AddQuestion(params.surveyId, dto);
+
+        console.log(question);
 
         await AddQuestionToOrder(params.surveyId, question.ID);
 
