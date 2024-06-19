@@ -22,7 +22,8 @@ async function GetQuestionFromDocument(surveyId: string, document: QueryDocument
             First: data["DefaultDetails"]["First"] ?? "",
             Last: data["DefaultDetails"]["Last"] ?? "",
         },
-        HasVersions: numVersions.data().count > 0
+        HasVersions: numVersions.data().count > 0,
+        Help: data["Help"] ?? ""
     }
     return question;
 }
@@ -54,7 +55,8 @@ export async function AddQuestion(surveyId: string, dto: QuestionCreationDTO) {
     const question = {
         InternalTitle: dto.InternalTitle,
         QuestionType: dto.QuestionType,
-        DefaultDetails: dto.DefaultDetails
+        DefaultDetails: dto.DefaultDetails,
+        Help: dto.Help
     }
 
     const docRef = await GetQuestionCollection(surveyId).add(question);
@@ -63,7 +65,8 @@ export async function AddQuestion(surveyId: string, dto: QuestionCreationDTO) {
         ID: docRef.id,
         InternalTitle: dto.InternalTitle,
         QuestionType: dto.QuestionType,
-        DefaultDetails: dto.DefaultDetails
+        DefaultDetails: dto.DefaultDetails,
+        Help: dto.Help
     };
 }
 
@@ -76,7 +79,8 @@ export async function UpdateQuestion(surveyId: string, questionId: string, dto: 
     await GetQuestionDocument(surveyId, questionId).update({
         InternalTitle: dto.InternalTitle,
         QuestionType: dto.QuestionType,
-        DefaultDetails: dto.DefaultDetails
+        DefaultDetails: dto.DefaultDetails,
+        Help: dto.Help
     });
 
     return true;

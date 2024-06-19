@@ -13,5 +13,6 @@ export interface Question {
     InternalTitle: string,
     QuestionType: QuestionType,
     DefaultDetails: QuestionDetails,
-    HasVersions: boolean
+    HasVersions: boolean,
+    Help: string
 }
