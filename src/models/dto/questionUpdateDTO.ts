@@ -15,7 +15,7 @@ export function QuestionUpdateDTOFromJSON(json: any): QuestionUpdateDTO {
     const details = json["DefaultDetails"];
     const help = json["Help"];
 
-    if(!title || !type || !details || !help) {
+    if(title == undefined || type == undefined || details == undefined || help == undefined) {
         throw TypeError;
     }
 
