@@ -11,13 +11,8 @@ export async function GET(request: NextRequest, { params }: RouteParams<Params>)
     const surveyId = params.surveyId;
     const nodeId = params.nodeId;
 
-    const answerStr = request.nextUrl.searchParams.get("answer");
-    if(!answerStr) {
-        return BadRequest();
-    }
-
-    const parsedAnswer = parseInt(answerStr);
-    if(isNaN(parsedAnswer)) {
+    const answer = request.nextUrl.searchParams.get("answer");
+    if(!answer) {
         return BadRequest();
     }
 
@@ -27,7 +22,7 @@ export async function GET(request: NextRequest, { params }: RouteParams<Params>)
         return NotFound();
     }
 
-    const childId = parentNode.NextPerAnswer[parsedAnswer];
+    const childId = parentNode.NextPerAnswer[answer];
 
     const childNode = await GetSurveyNode(surveyId, childId);
 
